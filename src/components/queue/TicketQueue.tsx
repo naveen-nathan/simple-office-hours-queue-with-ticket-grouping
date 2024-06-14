@@ -291,7 +291,19 @@ const TicketQueue = (props: TicketQueueProps) => {
     const ticketList = getTickets(TicketStatus.OPEN).concat(getTickets(TicketStatus.PENDING));
     const groups = new Map();
 
+    let alternate = true;
+
     ticketList.forEach(ticket => {
+
+      if (alternate) {
+        ticket.group = "1";
+      }
+      else {
+        ticket.group = "2";
+      }
+      alternate = !alternate;
+
+
 
       if (groups.has([ticket.assignmentName,  ticket.locationName])) {
         const members = groups.get([ticket.assignmentName,  ticket.locationName]);
@@ -304,6 +316,29 @@ const TicketQueue = (props: TicketQueueProps) => {
 
     return groups;
   };
+  //findGroups();
+
+  const assignGroups = () => {
+
+    const ticketList = getTickets(TicketStatus.OPEN).concat(getTickets(TicketStatus.PENDING));
+
+    let alternate = true;
+
+    ticketList.forEach(ticket => {
+
+      if (alternate) {
+        ticket.group = "1";
+      }
+      else {
+        ticket.group = "2";
+      }
+      alternate = !alternate;
+
+    })
+
+  }
+
+  assignGroups();
 
   return (
     <Flex width="full" align="left" flexDir="column" p={4}>
@@ -423,7 +458,12 @@ const TicketQueue = (props: TicketQueueProps) => {
         userRole={userRole}
       />
     </Flex>
+
+
   );
+
+
+
 };
 
 export default TicketQueue;

@@ -30,6 +30,7 @@ const TicketList = (props: TicketListProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCloseModalOpen, setIsCloseModalOpen] = useState(false);
   const [filterBy, setFilterBy] = useState("-");
+  const [filterByGroup, setFilterByGroup] = useState("-");
   const approveTicketsMutation = trpc.ticket.approveTickets.useMutation();
   const assignTicketsMutation = trpc.ticket.assignTickets.useMutation();
   const resolveTicketsMutation = trpc.ticket.resolveTickets.useMutation();
@@ -66,6 +67,18 @@ const TicketList = (props: TicketListProps) => {
   );
   const locationList = Array.from(
     new Set(initialTickets.map((ticket) => ticket.locationName)),
+  );
+
+  const groupList = Array.from(
+      new Set(initialTickets.map((ticket) => ticket.group)),
+  );
+
+  const filterByGroupOptions = ["-", ...groupList].map(
+      (option) => ({
+        label: option,
+        value: option,
+        id: option,
+      }),
   );
 
   const filterByOptions = ["-", ...assignmentList, ...locationList].map(
@@ -139,6 +152,7 @@ const TicketList = (props: TicketListProps) => {
   const handleFilterTickets = (
     filterBy: SingleValue<(typeof filterByOptions)[0]>,
   ) => {
+
     if (filterBy?.value === "-") {
       setFilterBy("-");
       setDisplayedTickets(initialTickets);
@@ -164,6 +178,34 @@ const TicketList = (props: TicketListProps) => {
     setDisplayedTickets(newDisplayedTickets);
   };
 
+  const handleFilterByGroup = (
+      filterByGroup: SingleValue<(typeof filterByGroupOptions)[0]>,
+  ) => {
+
+    if (filterByGroup?.value === "-") {
+      setFilterBy("-");
+      setDisplayedTickets(initialTickets);
+      sessionStorage.setItem("filterBy", "-");
+      return;
+    }
+
+    if (filterByGroup?.value === undefined) {
+      setFilterBy("-");
+      sessionStorage.setItem("filterBy", "-");
+      return;
+    }
+
+    sessionStorage.setItem("filterBy", filterByGroup.value);
+    setFilterByGroup(filterByGroup.value);
+    // Allows filtering by assignmentName or locationName
+    const newDisplayedTickets = initialTickets.filter(
+        (ticket) =>
+            ticket.group === filterByGroup.value
+    );
+
+    setDisplayedTickets(newDisplayedTickets);
+  };
+
   if (initialTickets.length === 0) {
     return <Text>No {uppercaseFirstLetter(ticketStatus)} Tickets!</Text>;
   }
@@ -178,6 +220,7 @@ const TicketList = (props: TicketListProps) => {
       </Head>
       <Flex flexDir="column">
         <Flex justifyContent="end" mb={4}>
+
           <Box width="sm">
             <Select
               value={{ label: filterBy, value: filterBy, id: filterBy }}
@@ -186,6 +229,16 @@ const TicketList = (props: TicketListProps) => {
               onChange={handleFilterTickets}
             />
           </Box>
+
+          <Box width="sm">
+            <Select
+                value={{ label: filterByGroup, value: filterByGroup, id: filterByGroup }}
+                options={filterByGroupOptions}
+                placeholder="Filter by..."
+                onChange={handleFilterByGroup}
+            />
+          </Box>
+
           <Button
             hidden={
               userRole !== UserRole.STAFF ||
@@ -214,7 +267,7 @@ const TicketList = (props: TicketListProps) => {
             alignSelf="flex-end"
             onClick={() => setIsCloseModalOpen(true)}
           >
-            {`Close all ${displayedTickets.length} displayed`}
+            {`Close all test ${displayedTickets.length} displayed`}
           </Button>
         </Flex>
         <Box ref={parent}>
