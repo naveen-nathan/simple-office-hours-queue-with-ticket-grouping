@@ -289,24 +289,21 @@ const TicketQueue = (props: TicketQueueProps) => {
   const findGroups = () => {
 
     const ticketList = getTickets(TicketStatus.OPEN).concat(getTickets(TicketStatus.PENDING));
-    //console.log("Open/Pending tickets");
     const groups = new Map();
 
     ticketList.forEach(ticket => {
 
-      if (groups.has(ticket.assignmentName)) {
-        const members = groups.get(ticket.assignmentName);
+      if (groups.has([ticket.assignmentName,  ticket.locationName])) {
+        const members = groups.get([ticket.assignmentName,  ticket.locationName]);
         members.add(ticket);
       }
       else {
-        groups.set(ticket.assignmentName, new Set([ticket]));
+        groups.set([ticket.assignmentName,  ticket.locationName], new Set([ticket]));
       }
     })
-    //console.log("Groups", groups);
+
     return groups;
   };
-
-  findGroups();
 
   return (
     <Flex width="full" align="left" flexDir="column" p={4}>
