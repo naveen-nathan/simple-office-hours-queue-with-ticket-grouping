@@ -1003,6 +1003,7 @@ export interface ChatMessageWithUserName extends ChatMessage {
 
 // Includes the name of users, location, and assignment
 export interface TicketWithNames extends Ticket {
+  group: string;
   helpedByName: string | null | undefined;
   createdByName: string | null;
   createdByEmail: string | null;

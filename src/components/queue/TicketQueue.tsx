@@ -50,6 +50,10 @@ const TicketQueue = (props: TicketQueueProps) => {
 
   const context = trpc.useContext();
 
+  /** List of keywords used to filter tickets into groups.
+   * This would be changed by TAs based on what they anticipate will be covered in OH/lab  */
+  const keywords = ['stack', 'queue', 'list'];
+
   /** Sets tabIndex if it exists in sessionStorage */
   useEffect(() => {
     const tabIndex = sessionStorage.getItem("tabIndex");
@@ -286,59 +290,23 @@ const TicketQueue = (props: TicketQueueProps) => {
     getTickets(TicketStatus.PENDING).length +
     getTickets(TicketStatus.ABSENT).length;
 
-  const findGroups = () => {
-
+  const assignGroupsByKeyword = () => {
     const ticketList = getTickets(TicketStatus.OPEN).concat(getTickets(TicketStatus.PENDING));
-    const groups = new Map();
-
-    let alternate = true;
-
     ticketList.forEach(ticket => {
+      keywords.forEach((keyword) => {
+        if (ticket.description?.toLowerCase()?.includes(keyword)) {
+          ticket.group = keyword;
+        }
+      })
+      if (ticket.group == null) {
 
-      if (alternate) {
-        ticket.group = "1";
-      }
-      else {
-        ticket.group = "2";
-      }
-      alternate = !alternate;
+        ticket.group = "None";
 
-
-
-      if (groups.has([ticket.assignmentName,  ticket.locationName])) {
-        const members = groups.get([ticket.assignmentName,  ticket.locationName]);
-        members.add(ticket);
-      }
-      else {
-        groups.set([ticket.assignmentName,  ticket.locationName], new Set([ticket]));
       }
     })
-
-    return groups;
-  };
-  //findGroups();
-
-  const assignGroups = () => {
-
-    const ticketList = getTickets(TicketStatus.OPEN).concat(getTickets(TicketStatus.PENDING));
-
-    let alternate = true;
-
-    ticketList.forEach(ticket => {
-
-      if (alternate) {
-        ticket.group = "1";
-      }
-      else {
-        ticket.group = "2";
-      }
-      alternate = !alternate;
-
-    })
-
   }
 
-  assignGroups();
+  assignGroupsByKeyword();
 
   return (
     <Flex width="full" align="left" flexDir="column" p={4}>

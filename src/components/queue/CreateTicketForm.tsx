@@ -15,6 +15,12 @@ import {
   Tooltip,
   useToast,
 } from "@chakra-ui/react";
+
+export interface ResolveOptions<TParams extends ProcedureParams> {
+  ctx: TParams['_ctx_out'];
+  input: TParams['_input_out'];
+}
+
 import { Category, PersonalQueue, TicketType } from "@prisma/client";
 import { Select, SingleValue } from "chakra-react-select";
 import Router from "next/router";
@@ -31,6 +37,7 @@ import {
   uppercaseFirstLetter,
 } from "../../utils/utils";
 import ConfirmPublicToggleModal from "../modals/ConfirmPublicToggleModal";
+import {ProcedureParams} from "@trpc/server/src/core/procedure";
 
 interface Assignment {
   id: number;

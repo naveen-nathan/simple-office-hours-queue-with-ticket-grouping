@@ -267,7 +267,7 @@ const TicketList = (props: TicketListProps) => {
             alignSelf="flex-end"
             onClick={() => setIsCloseModalOpen(true)}
           >
-            {`Close all test ${displayedTickets.length} displayed`}
+            {`Close all ${displayedTickets.length} displayed`}
           </Button>
         </Flex>
         <Box ref={parent}>
